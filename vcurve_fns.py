@@ -1,4 +1,4 @@
-%%cython
+# %%cython
 
 from cpython.array cimport array, clone
 from libc.math cimport log, pow, sqrt
