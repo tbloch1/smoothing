@@ -4,7 +4,7 @@ import scipy
 import copy
 
 def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
-                          n, n_miss, neg_res_only=False,Sopt_Rog_val=False):
+                          n, n_miss, neg_res_only=False,Sopt_Rog_val=False,Sopt_range=False):
 
     DCT = scipy.fft.dct((r_weights*(NDVI_profile - NDVIhat)
                          + NDVIhat),
@@ -12,7 +12,10 @@ def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
 
     # Step 4 - Loop S
     if not Sopt_Rog_val:
-        smoothing = 10**np.arange(-3,4.2,0.2)
+        if not Sopt_range:
+            smoothing = 10**np.arange(-3,4.2,0.2)
+        else:
+          smoothing = Sopt_range
     else: smoothing = [Sopt_Rog_val]
     gcv_temp = []
     tempNDVI_arr = []
@@ -64,7 +67,7 @@ def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
 
 def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
                               fit_envelope=False, neg_residuals_only=False,
-                              Sopt_Rog=False):
+                              Sopt_Rog=False,Sopt_range=False):
     # Copy of original NDVI profile
     _NDVI = copy.deepcopy(NDVI_profile)
 
@@ -106,7 +109,8 @@ def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
                                                 n=n,
                                                 n_miss=n_miss,
                                                 neg_res_only=neg_residuals_only,
-                                                Sopt_Rog_val=Sopt_Rog_val)
+                                                Sopt_Rog_val=Sopt_Rog_val,
+                                                Sopt_range=Sopt_range)
         NDVIhat, r_weights, best_gcv, all_gcv = results_garcia
         robust_weights.append(weights * r_weights)
         robust_gcv.append(best_gcv)
