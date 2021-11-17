@@ -12,7 +12,7 @@ def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
 
     # Step 4 - Loop S
     if not Sopt_Rog_val:
-        if not Sopt_range:
+        if Sopt_range is False:
             smoothing = 10**np.arange(-3,4.2,0.2)
         else:
           smoothing = Sopt_range
