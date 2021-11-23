@@ -2,6 +2,39 @@ import numba
 from numba import jit#, float64, int64
 # from numpy import zeros, isnan
 
+def input_stats(rstack_array):
+    '''
+    ['rs_min', 'rs_max', 'rs_range', 'rs_mean',
+     'rs_std', 'rs_med', 'rs_uq', 'rs_lq',
+     'rs_iqr', 'rs_snr', 'rs_snr2', 'rs_lag1']
+    '''
+    rs_arr = copy.copy(rstack_array)
+
+    rs_min = np.nanmin(rs_arr, axis=0)
+    rs_max = np.nanmax(rs_arr, axis=0)
+    rs_range = rs_max - rs_min
+
+    rs_mean = np.nanmean(rs_arr, axis=0)
+    rs_std = np.nanstd(rs_arr, axis=0)
+
+    rs_med = np.nanmedian(rs_arr, axis=0)
+    rs_uq = np.nanquantile(rs_arr, 0.75, axis=0)
+    rs_lq = np.nanquantile(rs_arr, 0.25, axis=0)
+    rs_iqr = rs_uq - rs_lq
+
+    rs_snr = rs_mean/rs_std
+    rs_snr2 = rs_snr**2
+    
+    rs_lag1 = np.apply_along_axis(lag1corr, 0, rs_arr)
+
+    stats_arr = [rs_min, rs_max, rs_range, rs_mean,
+                 rs_std, rs_med, rs_uq, rs_lq,
+                 rs_iqr, rs_snr, rs_snr2, rs_lag1]
+    
+    stats_arr = np.array(stats_arr)
+
+    return stats_arr
+
 @jit(nopython=True)
 def lag1corr(data_series, nodata=-3000):
     """Calculates Lag-1 autocorrelation.
