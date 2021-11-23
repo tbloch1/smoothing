@@ -15,7 +15,7 @@ def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
         if Sopt_range is False:
             smoothing = 10**np.arange(-3,4.2,0.2)
         else:
-          smoothing = Sopt_range
+          smoothing = 10**Sopt_range
     else: smoothing = [Sopt_Rog_val]
     gcv_temp = []
     tempNDVI_arr = []
@@ -54,6 +54,7 @@ def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
               d_eigs, n, n_miss):
 
     gamma = 1 / (1 + s_val*((-1*d_eigs)**2))
+
     NDVI_smoothed = scipy.fft.idct(gamma * NDVI_DCT,
                                 norm='ortho')
     
@@ -72,7 +73,8 @@ def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
     _NDVI = copy.deepcopy(NDVI_profile)
 
     # Weights for missing values
-    weights = (_NDVI!=-3000).astype(int)
+    # weights = (_NDVI!=-3000).astype(int)
+    weights = ((_NDVI!=-3000) & (_NDVI!=np.nan)).astype(int)
     # Initial robust weights (just ones so that it makes no difference)
     r_weights = np.ones(weights.shape)
     # Weighted NDVI profile
