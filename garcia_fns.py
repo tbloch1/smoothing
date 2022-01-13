@@ -15,8 +15,8 @@ def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
   '''
 
     DCT = fft.dct((r_weights*(NDVI_profile - NDVIhat)
-                         + NDVIhat),
-                        norm='ortho')
+                   + NDVIhat),
+                   norm='ortho')
 
     # Step 4 - Loop S
     if not Sopt_Rog_val:
@@ -68,7 +68,7 @@ def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
     gamma = 1 / (1 + s_val*((-1*d_eigs)**2))
 
     NDVI_smoothed = fft.idct(gamma * NDVI_DCT,
-                                norm='ortho')
+                             norm='ortho')
     
     tr_H = gamma.sum()
     wsse =  (((r_weights**0.5)*(NDVI_profile-NDVI_smoothed))**2).sum()
@@ -152,8 +152,8 @@ def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
     # Envelope Loop
     for env_it in range(env_its):
         DCT = fft.dct((Wopt*(_NDVI - NDVIhat)
-                         + NDVIhat),
-                        norm='ortho')
+                       + NDVIhat),
+                      norm='ortho')
         gcv, NDVIhat = GCV_score(_NDVI, NDVI_DCT=DCT,
                                  r_weights=Wopt, s_val=Sopt,
                                  d_eigs=d_eigs, n=n, n_miss=n_miss)
