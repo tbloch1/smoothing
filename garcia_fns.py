@@ -1,12 +1,13 @@
 import numpy as np
 import pandas as pd
 import scipy
+from scipy import fft
 import copy
 
 def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
                           n, n_miss, neg_res_only=False,Sopt_Rog_val=False,Sopt_range=False):
 
-    DCT = scipy.fft.dct((r_weights*(NDVI_profile - NDVIhat)
+    DCT = fft.dct((r_weights*(NDVI_profile - NDVIhat)
                          + NDVIhat),
                         norm='ortho')
 
@@ -55,7 +56,7 @@ def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
 
     gamma = 1 / (1 + s_val*((-1*d_eigs)**2))
 
-    NDVI_smoothed = scipy.fft.idct(gamma * NDVI_DCT,
+    NDVI_smoothed = fft.idct(gamma * NDVI_DCT,
                                 norm='ortho')
     
     tr_H = gamma.sum()
@@ -134,7 +135,7 @@ def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
     
     # Envelope Loop
     for env_it in range(env_its):
-        DCT = scipy.fft.dct((Wopt*(_NDVI - NDVIhat)
+        DCT = fft.dct((Wopt*(_NDVI - NDVIhat)
                          + NDVIhat),
                         norm='ortho')
         gcv, NDVIhat = GCV_score(_NDVI, NDVI_DCT=DCT,
