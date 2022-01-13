@@ -5,7 +5,14 @@ from scipy import fft
 import copy
 
 def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
-                          n, n_miss, neg_res_only=False,Sopt_Rog_val=False,Sopt_range=False):
+                          n, n_miss, neg_res_only=False, 
+                          Sopt_Rog_val=False, Sopt_range=False):
+  '''
+  Function that finds the best S-value and returns a smoothed NDVI profile,
+  as well as various info relating to the smoothing: the current weighting
+  being used; the best cross-validation score, and full cross-validation
+  results.  
+  '''
 
     DCT = fft.dct((r_weights*(NDVI_profile - NDVIhat)
                          + NDVIhat),
@@ -53,6 +60,10 @@ def garcia_robust_fitting(NDVI_profile, NDVIhat, r_weights, d_eigs,
            
 def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
               d_eigs, n, n_miss):
+  '''
+  Function which performs the generalised cross-validation and
+  subsequent smoothing.
+  '''
 
     gamma = 1 / (1 + s_val*((-1*d_eigs)**2))
 
@@ -70,6 +81,11 @@ def GCV_score(NDVI_profile, NDVI_DCT, r_weights, s_val,
 def Garcia_smoothing_complete(NDVI_profile, fit_robust=False,
                               fit_envelope=False, neg_residuals_only=False,
                               Sopt_Rog=False,Sopt_range=False):
+  '''
+  Function which performs the full Garcia smoothing and subsequent enveloping
+  to get a smooth NDVI profile.
+  '''
+  
     # Copy of original NDVI profile
     _NDVI = copy.deepcopy(NDVI_profile)
 
